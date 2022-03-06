@@ -42,7 +42,7 @@ export default {
   },
   data() {
     return {
-      tasks: [],
+      tasks: JSON.parse(localStorage.tasks) || [],
       curTask: '',
       show: true
     }
@@ -72,6 +72,19 @@ export default {
       if ($event.code === 'Enter') {
         this.addTask()
       }
+    },
+    saveTasksToLocal() {
+      localStorage.tasks = JSON.stringify(this.tasks)
+      const data = JSON.parse(localStorage.tasks)
+      console.log(data)
+    }
+  },
+  watch: {
+    tasks: {
+      handler(val, oldVal) {
+        this.saveTasksToLocal()
+      },
+      deep: true
     }
   }
 }
