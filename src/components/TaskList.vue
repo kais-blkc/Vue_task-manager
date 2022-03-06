@@ -25,6 +25,7 @@
           :task="task"
           :index="key"
           @removeTask="removeTask"
+          @editTask="editTask"
         />
       </transition-group>
     </div>
@@ -64,9 +65,9 @@ export default {
     removeTask(taskName) {
       this.tasks = this.tasks.filter((f) => f !== taskName)
     },
-    // editTask(index, text) {
-    //   this.tasks[index] = text
-    // },
+    editTask([index, text]) {
+      this.tasks[index] = text
+    },
     enterKey($event) {
       if ($event.code === 'Enter') {
         this.addTask()
@@ -101,7 +102,9 @@ input
   margin-left: 15px
   color: rgb(22 163 74)
   transition: all .2s ease
-  &:hover
+  outline: none
+  &:hover,
+  &:focus
     opacity: .8
   svg
     width: 100%
