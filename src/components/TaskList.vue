@@ -42,22 +42,25 @@ export default {
   },
   data() {
     return {
-      tasks: JSON.parse(localStorage.tasks) || [],
+      tasks: localStorage.tasks ? JSON.parse(localStorage.tasks) : [],
       curTask: '',
       show: true
     }
   },
   methods: {
-    addTask() {
+    checkInput() {
       if (!this.curTask) {
         alert('Заполните поле')
         return false
-      }
-
-      if (this.tasks.includes(this.curTask)) {
+      } else if (this.tasks.includes(this.curTask)) {
         alert('Уже есть такая задача')
         return false
       }
+
+      return true
+    },
+    addTask() {
+      if (!this.checkInput()) return false
 
       this.tasks.push(this.curTask)
       this.curTask = ''
@@ -72,17 +75,12 @@ export default {
       if ($event.code === 'Enter') {
         this.addTask()
       }
-    },
-    saveTasksToLocal() {
-      localStorage.tasks = JSON.stringify(this.tasks)
-      const data = JSON.parse(localStorage.tasks)
-      console.log(data)
     }
   },
   watch: {
     tasks: {
       handler(val, oldVal) {
-        this.saveTasksToLocal()
+        localStorage.tasks = JSON.stringify(this.tasks)
       },
       deep: true
     }
