@@ -22,10 +22,12 @@
         <task-item
           v-for="(task, key) in tasks"
           :key="key"
-          :task="task"
+          :task="task.task"
           :index="key"
+          :classes="task.done"
           @removeTask="removeTask"
           @editTask="editTask"
+          @changeDone="changeDone"
         />
       </transition-group>
     </div>
@@ -49,37 +51,49 @@ export default {
   },
   methods: {
     checkInput() {
+      let notSuchTask = true
+
       if (!this.curTask) {
         alert('Заполните поле')
-        return false
-      } else if (this.tasks.includes(this.curTask)) {
-        alert('Уже есть такая задача')
-        return false
+        notSuchTask = false
       }
 
-      return true
+      this.tasks.forEach((t) => {
+        if (t.task === this.curTask) {
+          alert('Такая задача уже есть')
+          notSuchTask = false
+        }
+      })
+
+      return notSuchTask
     },
     addTask() {
       if (!this.checkInput()) return false
 
-      this.tasks.push(this.curTask)
+      this.tasks.push({
+        task: this.curTask,
+        done: false
+      })
       this.curTask = ''
     },
     removeTask(taskName) {
-      this.tasks = this.tasks.filter((f) => f !== taskName)
+      this.tasks = this.tasks.filter((f) => f.task !== taskName)
     },
     editTask([index, text]) {
-      this.tasks[index] = text
+      this.tasks[index].task = text
     },
     enterKey($event) {
       if ($event.code === 'Enter') {
         this.addTask()
       }
+    },
+    changeDone([index, doneState]) {
+      this.tasks[index].done = doneState
     }
   },
   watch: {
     tasks: {
-      handler(val, oldVal) {
+      handler() {
         localStorage.tasks = JSON.stringify(this.tasks)
       },
       deep: true

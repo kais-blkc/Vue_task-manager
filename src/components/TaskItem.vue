@@ -1,12 +1,13 @@
 <template>
   <div
-    class="task-item mt-3 bg-slate-200 rounded px-3 py-2"
-    :class="{ done }"
+    class="task-item mt-2 bg-slate-200 rounded px-3 py-2"
+    :class="{ done: classes }"
     :data-count="key"
   >
-    <button class="done-btn" :class="{ done }" @click="done = !done">
+    <button class="done-btn" :class="{ done: classes }" @click="changeDone">
       <fa icon="square-check"></fa>
     </button>
+
     <input
       class="editInput rounded"
       :disabled="!editable"
@@ -14,7 +15,11 @@
       @blur="curVal = $event.target.value"
     />
 
-    <button class="task-item-edit" @click="editable = !editable">
+    <button
+      class="task-item-edit"
+      :disabled="classes"
+      @click="editable = !editable"
+    >
       <fa v-if="editable" icon="check"></fa>
       <fa v-else icon="pen-to-square"></fa>
     </button>
@@ -27,17 +32,21 @@
 <script>
 export default {
   name: 'TaskItem',
-  props: ['task', 'index'],
+  props: ['task', 'index', 'classes'],
   data() {
     return {
       editable: false,
       curVal: this.task,
-      done: false
+      done: JSON.parse(localStorage.tasks)[this.index].done || false
     }
   },
   methods: {
     removeTask() {
       this.$emit('removeTask', this.task)
+    },
+    changeDone() {
+      this.done = !this.done
+      this.$emit('changeDone', [this.index, this.done])
     }
   },
   watch: {
@@ -76,6 +85,10 @@ export default {
     &::before
       width: 86.1%
       background: theme('colors.gray.500')
+
+    .task-item-edit
+      color: theme('colors.gray.500')
+      cursor: auto
 
   &-del,
   &-edit
