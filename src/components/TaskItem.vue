@@ -69,6 +69,11 @@ export default {
   padding-right: 60px
   padding-left: 40px
   transition: all .3s ease
+  @media (max-width: 767px)
+    height: 50px
+    display: flex
+    align-content: center
+
   &::before
     content: ""
     width: 0
@@ -76,14 +81,16 @@ export default {
     background: #1f2937
     transition: all .2s ease
     position: absolute
-    top: calc(56% - 1px)
+    top: calc(50% - 1px)
     border-radius: 2px
     left: 40px
     z-index: 10
+
   &.done
     color: theme('colors.gray.500')
     &::before
-      width: 86.1%
+      // width: 86.1%
+      width: calc(100% - 105px)
       background: theme('colors.gray.500')
 
     .task-item-edit
@@ -103,6 +110,12 @@ export default {
     transition: all .3s ease
     outline: none
     color: theme('colors.gray.800')
+    svg
+      width: 100%
+      height: 100%
+    @media (max-width: 767px)
+      width: 20px
+      height: 20px
   &-del
     right: 10px
     &:hover,
@@ -115,14 +128,16 @@ export default {
       color: rgb(8 145 178)
 
 .editInput
-  width: 100%
   padding: 0
+  width: 99.5%
+  background: transparent
   transition: all .2s ease
   outline: none
   &:focus
     box-shadow: 0 0 0 1px #333 inset
   &:not([disabled])
     padding: 0 10px
+    background: #fff
 
 .done-btn
   width: 16px
@@ -137,9 +152,15 @@ export default {
   top: calc(50% - 7px)
   left: 10px
   transition: all .2s ease
+  @media (max-width: 767px)
+    width: 20px
+    height: 20px
+    top: calc(50% - 10px)
   svg
     opacity: 0
     transition: all .2s ease
+    width: 160%
+    height: 160%
   &.done
     border-color: transparent
     svg

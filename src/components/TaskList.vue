@@ -120,6 +120,13 @@ export default {
 
 input
   outline: none
+  @media (max-width: 767px)
+    height: 50px
+
+.add-task
+  @media (max-width: 767px)
+    display: flex
+    align-items: center
 
 .add-task-btn
   width: 35px
@@ -131,6 +138,11 @@ input
   &:hover,
   &:focus
     opacity: .8
+
+  @media (max-width: 767px)
+    width: 45px
+    height: 45px
+
   svg
     width: 100%
     height: 100%

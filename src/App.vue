@@ -1,6 +1,6 @@
 <template>
-  <div class="container">
-    <h1 class="text-5xl font-bold text-center my-5 text-green-700">
+  <div class="container px-3">
+    <h1 class="text-4xl md:text-5xl font-bold text-center my-5 text-green-700">
       Vue task manager
     </h1>
 
