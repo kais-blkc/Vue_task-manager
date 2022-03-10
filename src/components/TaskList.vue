@@ -22,10 +22,9 @@
         <task-item
           v-for="(task, key) in tasks"
           :key="key"
-          :task="task"
+          :task="task.task"
           :index="key"
-          @removeTask="removeTask"
-          @editTask="editTask"
+          :classes="task.done"
         />
       </transition-group>
     </div>
@@ -34,6 +33,7 @@
 
 <script>
 import TaskItem from './TaskItem'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
   name: 'TaskList',
@@ -42,44 +42,51 @@ export default {
   },
   data() {
     return {
-      tasks: localStorage.tasks ? JSON.parse(localStorage.tasks) : [],
-      curTask: '',
-      show: true
+      curTask: ''
     }
   },
+  computed: {
+    ...mapState(['tasks'])
+  },
   methods: {
-    checkInput() {
-      if (!this.curTask) {
-        alert('Заполните поле')
-        return false
-      } else if (this.tasks.includes(this.curTask)) {
-        alert('Уже есть такая задача')
-        return false
-      }
-
-      return true
-    },
-    addTask() {
-      if (!this.checkInput()) return false
-
-      this.tasks.push(this.curTask)
-      this.curTask = ''
-    },
-    removeTask(taskName) {
-      this.tasks = this.tasks.filter((f) => f !== taskName)
-    },
-    editTask([index, text]) {
-      this.tasks[index] = text
-    },
+    ...mapMutations([
+      'addTaskVuex',
+      'removeTaskVuex',
+      'editTaskVuex',
+      'changeDoneVuex'
+    ]),
     enterKey($event) {
       if ($event.code === 'Enter') {
         this.addTask()
       }
+    },
+    checkInput() {
+      let notSuchTask = true
+
+      if (!this.curTask) {
+        alert('Заполните поле')
+        notSuchTask = false
+      }
+
+      this.tasks.forEach((t) => {
+        if (t.task === this.curTask) {
+          alert('Такая задача уже есть')
+          notSuchTask = false
+        }
+      })
+
+      return notSuchTask
+    },
+    addTask() {
+      if (!this.checkInput()) return false
+
+      this.addTaskVuex(this.curTask)
+      this.curTask = ''
     }
   },
   watch: {
     tasks: {
-      handler(val, oldVal) {
+      handler() {
         localStorage.tasks = JSON.stringify(this.tasks)
       },
       deep: true
@@ -102,10 +109,20 @@ export default {
 
 .task-list-wrapper
   margin: 35px auto 0
-  max-width: 720px
+  max-width: 100%
+
+.task-list
+  transition: all .3s ease
 
 input
   outline: none
+  @media (max-width: 767px)
+    height: 50px
+
+.add-task
+  @media (max-width: 767px)
+    display: flex
+    align-items: center
 
 .add-task-btn
   width: 35px
@@ -117,6 +134,11 @@ input
   &:hover,
   &:focus
     opacity: .8
+
+  @media (max-width: 767px)
+    width: 45px
+    height: 45px
+
   svg
     width: 100%
     height: 100%
