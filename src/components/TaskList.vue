@@ -25,9 +25,6 @@
           :task="task.task"
           :index="key"
           :classes="task.done"
-          @removeTask="removeTask"
-          @editTask="editTask"
-          @changeDone="changeDone"
         />
       </transition-group>
     </div>
@@ -36,6 +33,7 @@
 
 <script>
 import TaskItem from './TaskItem'
+import { mapState, mapMutations } from 'vuex'
 
 export default {
   name: 'TaskList',
@@ -44,12 +42,24 @@ export default {
   },
   data() {
     return {
-      tasks: localStorage.tasks ? JSON.parse(localStorage.tasks) : [],
-      curTask: '',
-      show: true
+      curTask: ''
     }
   },
+  computed: {
+    ...mapState(['tasks'])
+  },
   methods: {
+    ...mapMutations([
+      'addTaskVuex',
+      'removeTaskVuex',
+      'editTaskVuex',
+      'changeDoneVuex'
+    ]),
+    enterKey($event) {
+      if ($event.code === 'Enter') {
+        this.addTask()
+      }
+    },
     checkInput() {
       let notSuchTask = true
 
@@ -70,25 +80,8 @@ export default {
     addTask() {
       if (!this.checkInput()) return false
 
-      this.tasks.push({
-        task: this.curTask,
-        done: false
-      })
+      this.addTaskVuex(this.curTask)
       this.curTask = ''
-    },
-    removeTask(taskName) {
-      this.tasks = this.tasks.filter((f) => f.task !== taskName)
-    },
-    editTask([index, text]) {
-      this.tasks[index].task = text
-    },
-    enterKey($event) {
-      if ($event.code === 'Enter') {
-        this.addTask()
-      }
-    },
-    changeDone([index, doneState]) {
-      this.tasks[index].done = doneState
     }
   },
   watch: {
@@ -116,7 +109,10 @@ export default {
 
 .task-list-wrapper
   margin: 35px auto 0
-  max-width: 720px
+  max-width: 100%
+
+.task-list
+  transition: all .3s ease
 
 input
   outline: none

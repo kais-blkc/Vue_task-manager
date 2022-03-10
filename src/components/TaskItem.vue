@@ -2,7 +2,6 @@
   <div
     class="task-item mt-2 bg-slate-200 rounded px-3 py-2"
     :class="{ done: classes }"
-    :data-count="key"
   >
     <button class="done-btn" :class="{ done: classes }" @click="changeDone">
       <fa icon="square-check"></fa>
@@ -30,6 +29,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 export default {
   name: 'TaskItem',
   props: ['task', 'index', 'classes'],
@@ -41,12 +42,16 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['removeTaskVuex', 'editTaskVuex', 'changeDoneVuex']),
     removeTask() {
-      this.$emit('removeTask', this.task)
+      this.removeTaskVuex(this.task)
+    },
+    editTask([index, val]) {
+      this.editTaskVuex([index, val])
     },
     changeDone() {
       this.done = !this.done
-      this.$emit('changeDone', [this.index, this.done])
+      this.changeDoneVuex([this.index, this.done])
     }
   },
   watch: {
@@ -56,7 +61,8 @@ export default {
         alert('Заполните поле')
         return false
       }
-      this.$emit('editTask', [this.index, this.curVal])
+      this.editTask([this.index, this.curVal])
+      // this.editTaskVuex([this.index, this.curVal])
     }
   }
 }
